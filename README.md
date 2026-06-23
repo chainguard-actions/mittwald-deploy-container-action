@@ -8,6 +8,7 @@ Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at
 
 | Version | Tag | Upstream commit |
 |---------|-----|-----------------|
+| v1.0.1 | [`v1.0.1`](https://github.com/chainguard-actions/mittwald-deploy-container-action/tree/v1.0.1) | [`c59bca9`](https://github.com/mittwald/deploy-container-action/commit/c59bca9a640a299157ed74ec6e15c81e473d2ef6) |
 | v1.0.5 | [`v1.0.5`](https://github.com/chainguard-actions/mittwald-deploy-container-action/tree/v1.0.5) | [`0551d75`](https://github.com/mittwald/deploy-container-action/commit/0551d75d8ea585aefc0de678b87a59e400b80faf) |
 
 ## Privacy
