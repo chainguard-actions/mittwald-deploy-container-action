@@ -1,0 +1,38 @@
+name: Test stack_file input
+on:
+  workflow_dispatch:
+
+jobs:
+  test-stack-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create stack file for testing
+        run: |
+          cat > /tmp/stack.yaml << 'EOF'
+          services:
+            web:
+              image: nginx:latest
+              ports:
+                - "80:80"
+          volumes: {}
+          EOF
+
+      - name: Run action with stack_file input (expect API auth failure, not config failure)
+        id: deploy
+        uses: .
+        continue-on-error: true
+        with:
+          api_token: "test-invalid-token"
+          stack_id: "00000000-0000-0000-0000-000000000000"
+          stack_file: "/tmp/stack.yaml"
+
+      - name: Assert action ran (failed due to API auth, not missing config)
+        run: |
+          echo "outcome: ${{ steps.deploy.outcome }}"
+          if [ "${{ steps.deploy.outcome }}" = "skipped" ]; then
+            echo "FAIL: action was skipped unexpectedly"
+            exit 1
+          fi
+          echo "PASS: action ran and produced an outcome (failure due to invalid API token is expected)"

@@ -1,0 +1,49 @@
+name: 'mittwald mStudio container deployment'
+description: 'Update a mStudio container stack using the official API client and a YAML-based configuration'
+author: 'mittwald'
+
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+
+inputs:
+  api_token:
+    description: >
+      An mStudio API token. See https://developer.mittwald.de/docs/v2/api/intro/
+      on how to obtain an API token.
+    required: true
+  stack_id:
+    description: >
+      The ID of the mStudio container stack to deploy. See
+      https://developer.mittwald.de/docs/v2/api/howtos/create-container/
+      on how to determine this ID.
+    required: true
+
+  skip_recreation:
+    description: >
+      Comma-separated list of services that should NOT be recreated after patching the stack
+    required: false
+
+  stack_yaml:
+    description: 'Multiline YAML containing both services and volumes'
+    required: false
+  stack_file:
+    description: 'Path to stack.yaml file containing both services and volumes'
+    required: false
+
+  services_yaml:
+    description: 'Multiline YAML input for services'
+    required: false
+  services_file:
+    description: 'Path to services.yaml'
+    required: false
+  volumes_yaml:
+    description: 'Multiline YAML input for volumes'
+    required: false
+  volumes_file:
+    description: 'Path to volumes.yaml'
+    required: false
