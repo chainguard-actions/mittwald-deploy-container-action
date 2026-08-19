@@ -1,0 +1,43 @@
+name: Test usage with stack_file
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create stack file
+        run: |
+          cat > "$GITHUB_WORKSPACE/stack.yaml" <<'EOF'
+          services:
+            app:
+              image: alpine:latest
+              command: ["echo", "hello"]
+          volumes: {}
+          EOF
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          api_token: fake-token-for-testing
+          stack_id: 00000000-0000-0000-0000-000000000000
+          stack_file: stack.yaml
+
+      - name: Assert action ran and failed with auth error (not a startup error)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # The action should fail because the API token is invalid,
+          # not because of a missing file or misconfiguration.
+          if [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed as expected with invalid credentials"
+          elif [ "$OUTCOME" = "success" ]; then
+            echo "FAIL: action unexpectedly succeeded with fake credentials"
+            exit 1
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

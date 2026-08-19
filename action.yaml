@@ -8,7 +8,7 @@ branding:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/mittwald/deploy-container-action@sha256:96aec5760ab3d79ed4af3fe2647fe3f1ae82d0aa5abbeb976cdf1b56f9e65a17' # v1
+  image: 'docker://ghcr.io/mittwald/deploy-container-action:v1@sha256:96aec5760ab3d79ed4af3fe2647fe3f1ae82d0aa5abbeb976cdf1b56f9e65a17'
 
 inputs:
   api_token:

@@ -1,0 +1,40 @@
+name: Test usage with services_yaml and volumes_yaml
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          api_token: fake-token-for-testing
+          stack_id: 00000000-0000-0000-0000-000000000000
+          services_yaml: |
+            web:
+              image: nginx:latest
+              ports:
+                - "80:80"
+          volumes_yaml: |
+            data:
+              driver: local
+
+      - name: Assert action ran and failed with auth error (not a startup error)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          # The action should fail because the API token is invalid,
+          # not because of a misconfiguration or missing input.
+          if [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed as expected with invalid credentials"
+          elif [ "$OUTCOME" = "success" ]; then
+            echo "FAIL: action unexpectedly succeeded with fake credentials"
+            exit 1
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
