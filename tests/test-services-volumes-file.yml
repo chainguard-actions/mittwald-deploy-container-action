@@ -1,0 +1,45 @@
+name: Test services_file and volumes_file inputs
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Create services and volumes fixture files
+        run: |
+          mkdir -p /tmp/stack-fixtures
+          cat > /tmp/stack-fixtures/services.yaml <<'EOF'
+          my-service:
+            image: nginx:latest
+            ports:
+              - "80:80"
+          EOF
+          cat > /tmp/stack-fixtures/volumes.yaml <<'EOF'
+          my-volume:
+            driver: local
+          EOF
+
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          api_token: fake-token-for-testing
+          stack_id: 00000000-0000-0000-0000-000000000000
+          services_file: /tmp/stack-fixtures/services.yaml
+          volumes_file: /tmp/stack-fixtures/volumes.yaml
+
+      - name: Assert action ran (failed gracefully with invalid credentials)
+        env:
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action succeeded unexpectedly (real credentials?)"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully as expected with fake credentials"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

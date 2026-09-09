@@ -1,0 +1,11 @@
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+  app:
+    image: alpine:latest
+    command: ["sh", "-c", "echo hello"]
+volumes:
+  data:
+    driver: local
